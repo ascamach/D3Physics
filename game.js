@@ -1,6 +1,6 @@
-class Intro extends Phaser.Scene {
+class Action1 extends Phaser.Scene {
     constructor() {
-        super('intro');
+        super('action1');
     }
 
     preload() {
@@ -16,7 +16,13 @@ class Intro extends Phaser.Scene {
             .setScale(1.25)
             .setCollideWorldBounds(true);
 
-        let enemy = this.physics.add.image(400, 100, "enemy");
+        let enemy = this.physics.add.image(400, 100, "enemy")
+            .setScale(1.25)
+            .setVelocityX(200)
+            .setBounce(1)
+            .setCollideWorldBounds(true);
+
+        let enemies_destroyed = 0;
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -45,14 +51,31 @@ class Intro extends Phaser.Scene {
                 laser.destroy;
             } 
 
-            
+            this.physics.add.overlap(laser, this.enemy, () => {
+                enemies_destroyed += 1;
+            })
         });
+
+        if (enemies_destroyed == 1) {
+            this.scene.start("ending");
+        }
     }
 }
 
-function destroy_enemy(laser, enemy) {
+class Ending extends Phaser.Scene {
+    constructor() {
+        super('ending');
+    }
+
+    create() {
+        this.add.text(100, 100, "test ending");
+    }
+}
+
+function destroy_enemy(laser, enemy, enemies_destroyed) {
     laser.destroy();
     enemy.destroy();
+    enemies_destroyed += 1;
 }
 
 const game = new Phaser.Game({
@@ -67,6 +90,6 @@ const game = new Phaser.Game({
         }
     },
 
-    scene: [Intro],
+    scene: [Action1],
     title: "Adventure Game"
 });
