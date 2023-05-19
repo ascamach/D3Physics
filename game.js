@@ -7,22 +7,39 @@ class Action1 extends Phaser.Scene {
         this.load.path = "./assets/";
         this.load.image("ship", "ship.png");
         this.load.image("enemy", "enemy.png");
+        this.load.image("goal", "goal.png");
     }
 
     create() {
-        this.add.text(50, 50, 'Hello World').setFontSize(50);
-
         let ship = this.physics.add.sprite(400, 700, "ship")
             .setScale(1.25)
             .setCollideWorldBounds(true);
 
-        let enemy = this.physics.add.image(400, 100, "enemy")
+        let enemy = this.physics.add.image(700, 100, "enemy")
+            .setImmovable(true)
+            .setScale(1.25);
+        /* Old Enemy Behavior
+        *  Saving for reference
             .setScale(1.25)
             .setVelocityX(200)
             .setBounce(1)
             .setCollideWorldBounds(true);
+        */
 
-        let enemies_destroyed = 0;
+        const rect1 = this.add.rectangle(300, 400, 600, 50, 0x5A5A5A);
+        const rect2 = this.add.rectangle(600, 300, 50, 250, 0x5A5A5A);
+
+        this.physics.add.existing(rect1);
+        this.physics.add.existing(rect2);
+        rect1.body.setImmovable(true);
+        rect2.body.setImmovable(true);
+
+        this.physics.add.collider(rect1, ship);
+        this.physics.add.collider(rect2, ship);
+
+        const goal = this.physics.add.image(100, 100, "goal")
+            .setImmovable(true)
+            .setScale(1.5);
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -31,34 +48,42 @@ class Action1 extends Phaser.Scene {
                 ship.setVelocityX(-200);
             } else if (event.key == 'd') {
                 ship.setVelocityX(200);
-            } else {
-                ship.setVelocityX(0);
+            } else if (event.key == 's') {
+                ship.setVelocityY(200);
+            } else if (event.key == 'w') {
+                ship.setVelocityY(-200);
             }
         });
+
 
         this.input.keyboard.on('keyup', (event) => {
             if(event.key) {
                 ship.setVelocityX(0);
+                ship.setVelocityY(0);
             }
         });
 
         this.input.on('pointerdown', () => {
             let laser = this.physics.add.image(ship.x+4, ship.y, "laser").setVelocityY(-500);
 
-            this.physics.add.collider(laser, enemy, destroy_enemy, null, this);
+            this.physics.add.overlap(laser, enemy, destroy_enemy, null, this);
+            this.physics.add.collider(laser, enemy);
+
+            this.physics.add.overlap(laser, rect1, laser_wall, null, this);
+            this.physics.add.overlap(laser, rect2, laser_wall, null, this);
+            this.physics.add.collider(laser, rect1);
+            this.physics.add.collider(laser, rect2);
 
             if (laser.y > this.game.config.height) {
                 laser.destroy;
             } 
-
-            this.physics.add.overlap(laser, this.enemy, () => {
-                enemies_destroyed += 1;
-            })
         });
 
-        if (enemies_destroyed == 1) {
-            this.scene.start("ending");
-        }
+        this.physics.add.overlap(ship, goal, next_scene, null, this);
+        this.physics.add.collider(ship, goal);
+
+        this.physics.add.overlap(ship, enemy, game_over, null, this);
+        this.physics.add.collider(ship, enemy);
     }
 }
 
@@ -72,10 +97,27 @@ class Ending extends Phaser.Scene {
     }
 }
 
-function destroy_enemy(laser, enemy, enemies_destroyed) {
+function destroy_enemy(laser, enemy) {
     laser.destroy();
     enemy.destroy();
-    enemies_destroyed += 1;
+}
+
+function laser_wall(laser, wall) {
+    laser.destroy();
+}
+
+function next_scene() {
+    this.cameras.main.fade(1000, 0, 0, 0);
+    this.time.delayedCall(1000, ()=> {
+        this.scene.start('ending');
+    });
+}
+
+function game_over() {
+    this.cameras.main.fade(1000, 0, 0, 0);
+    this.time.delayedCall(1000, ()=> {
+        this.scene.start('ending');
+    });
 }
 
 const game = new Phaser.Game({
@@ -90,6 +132,6 @@ const game = new Phaser.Game({
         }
     },
 
-    scene: [Action1],
+    scene: [Action1, Ending],
     title: "Adventure Game"
 });
