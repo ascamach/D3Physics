@@ -1,20 +1,17 @@
-class Intro extends Phaser.scene {
+class Intro extends Phaser.Scene {
     constructor() {
         super('intro');
     }
 
     create() {
-        this.add.text(50, 50, 'Hello').setFontSize(50);
+        this.add.text(50, 50, 'Hello World').setFontSize(50);
     }
 }
 
 const game = new Phaser.Game({
-    scale: {
-        mode: Phaser.scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 800,
-        height: 600
-    },
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
 
     physics: {
         default: 'arcade',
@@ -24,6 +21,6 @@ const game = new Phaser.Game({
         }
     },
 
-    scene: [],
+    scene: [Intro],
     title: "Adventure Game"
 });
