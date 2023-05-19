@@ -10,6 +10,6 @@ const game = new Phaser.Game({
         }
     },
 
-    scene: [Intro, Tutorial1, Action1, Action2, Ending],
+    scene: [Intro, Tutorial1, Action1, Break1, Action2, Break2, Action3, Game_Over, Finish],
     title: "Physics Game"
 });
