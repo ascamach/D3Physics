@@ -257,7 +257,7 @@ class Action3 extends Phaser.Scene {
         let enemy1 = this.physics.add.image(700, 150, "enemy")
             .setImmovable(true)
             .setScale(1.25)
-            .setVelocityX(200)
+            .setVelocityX(400)
             .setBounce(1)
             .setCollideWorldBounds(true);
 
@@ -271,7 +271,7 @@ class Action3 extends Phaser.Scene {
         let enemy3 = this.physics.add.image(700, 100, "enemy")
             .setImmovable(true)
             .setScale(1.25)
-            .setVelocityY(200)
+            .setVelocityY(400)
             .setBounce(1)
             .setCollideWorldBounds(true);
 

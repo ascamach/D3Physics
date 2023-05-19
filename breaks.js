@@ -9,8 +9,8 @@ class Break1 extends Phaser.Scene {
         this.add.text(25, 150, "Unfortunately, your clients\nwant you to move again!").setFontSize(25);
 
         this.time.delayedCall(2000, () => {
+            this.add.text(25, 600, "(Click to continue.)").setFontSize(20);
             this.input.on('pointerdown', () => {
-                this.add.text(25, 600, "(Click to continue.)").setFontSize(20);
                 this.scene.start('action2');
             });
         });
@@ -29,9 +29,9 @@ class Break2 extends Phaser.Scene {
         this.add.text(25, 250, "Good luck, this is your final mission!").setFontSize(25);
 
         this.time.delayedCall(2000, () => {
+            this.add.text(25, 600, "(Click to continue.)").setFontSize(20);
             this.input.on('pointerdown', () => {
-                this.add.text(25, 600, "(Click to continue.)").setFontSize(20);
-                this.scene.start('action2');
+                this.scene.start('action3');
             });
         });
     }
